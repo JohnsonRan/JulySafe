@@ -21,10 +21,9 @@ import java.util.stream.Collectors;
 @MainCommand(firstArg = "helper", description = "帮助者相关", permission = Util.ADMIN_PER)
 public class HelperCommand implements JulyCommand {
     private final JulySafe plugin = JulySafe.getInstance();
-    private final LangHelper langHelper = plugin.getLangHelper();
     private final DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
-    @SubCommand(firstArg = "helper", description = "${finder.helper}", length = 3, subArgs = {"<世界>", "<类型>", "<条数(-1)>"}, permission = Util.ADMIN_PER, senders = {SenderType.PLAYER, SenderType.CONSOLE})
+    //@SubCommand(firstArg = "helper", description = "${finder.helper}", length = 3, subArgs = {"<世界>", "<类型>", "<条数(-1)>"}, permission = Util.ADMIN_PER, senders = {SenderType.PLAYER, SenderType.CONSOLE})
     public void findEntities(CommandSender sender, String[] args) {
         String argWorld = args[0];
         String argType = args[1];
@@ -35,7 +34,7 @@ public class HelperCommand implements JulyCommand {
         try {
             entityType = EntityType.valueOf(argType);
         } catch (Exception e) {
-            langHelper.sendMsg(sender, "&c实体类型不合法: " + argType + ".");
+            LangHelper.sendMsg(sender, "&c实体类型不合法: " + argType + ".");
             return;
         }
 
@@ -44,23 +43,23 @@ public class HelperCommand implements JulyCommand {
         try {
             amount = Integer.parseInt(argAmount);
         } catch (Exception e) {
-            langHelper.sendMsg(sender, "&c数量不合法: " + argAmount + ".");
+            LangHelper.sendMsg(sender, "&c数量不合法: " + argAmount + ".");
             return;
         }
 
         if (amount != -1 && amount <= 0) {
-            langHelper.sendMsg(sender, "&c数量不合法: " + argAmount + ".");
+            LangHelper.sendMsg(sender, "&c数量不合法: " + argAmount + ".");
             return;
         }
 
         World world = Bukkit.getWorld(argWorld);
 
         if (world == null) {
-            langHelper.sendMsg(sender, "&c数世界不合法: " + argWorld + ".");
+            LangHelper.sendMsg(sender, "&c数世界不合法: " + argWorld + ".");
             return;
         }
 
-        langHelper.sendMsg(sender, "以下: ");
+        LangHelper.sendMsg(sender, "以下: ");
 
         List<Entity> filterEntities = world.getEntities().stream().filter(entity -> entity.getType() == entityType).collect(Collectors.toList());
         Map<Chunk, Integer> counterMap = new HashMap<>();
@@ -83,24 +82,24 @@ public class HelperCommand implements JulyCommand {
             if (amount == -1 || counter++ < amount) {
                 Location loc = sampleLocationMap.get(chunk);
 
-                langHelper.sendMsg(sender, "世界 = " + argWorld + ", 区块(" + chunk.getX() + ", " + chunk.getZ() + "), 数量 = " + counterMap.get(chunk) + ", 样本位置 = (" + (int) loc.getX() + ", " + (int) loc.getY() + ", " + (int) loc.getZ() + ")");
+                LangHelper.sendMsg(sender, "世界 = " + argWorld + ", 区块(" + chunk.getX() + ", " + chunk.getZ() + "), 数量 = " + counterMap.get(chunk) + ", 样本位置 = (" + (int) loc.getX() + ", " + (int) loc.getY() + ", " + (int) loc.getZ() + ")");
             }
         }
     }
 
     @SubCommand(firstArg = "tps", description = "查看 Tps", length = 0, permission = Util.ADMIN_PER, senders = {SenderType.PLAYER, SenderType.CONSOLE})
     public void tps(CommandSender sender, String[] args) {
-        langHelper.sendMsg(sender, "&f当前 Tps: " + decimalFormat.format(JulySafe.getInstance().getAverageTps()));
+        LangHelper.sendMsg(sender, "${prefix} &f当前 Tps: " + decimalFormat.format(JulySafe.getInstance().getAverageTps()));
     }
 
     @SubCommand(firstArg = "entities", description = "查看实体情况", length = 0, permission = Util.ADMIN_PER, senders = {SenderType.PLAYER, SenderType.CONSOLE})
     public void entities(CommandSender sender, String[] args) {
-        langHelper.sendMsg(sender, "颜色指示: &6动物 &c怪物 &dNPC &e其他");
-        langHelper.sendMsg(sender, "以下: ");
+        LangHelper.sendMsg(sender, "${prefix} 颜色指示: &6动物 &c怪物 &dNPC &e其他");
+        LangHelper.sendMsg(sender, "${prefix} 以下: ");
 
         for (World world : Bukkit.getWorlds()) {
             StringBuilder finalMsg = new StringBuilder();
-            finalMsg.append("[").append(world.getName()).append("]").append(" ");
+            finalMsg.append("${prefix} [").append(world.getName()).append("]").append(" ");
 
             Map<EntityType, Integer> counterMap = new HashMap<>();
 
@@ -139,7 +138,7 @@ public class HelperCommand implements JulyCommand {
                 finalMsg.append(entityTypeName).append(" = ").append(entry.getValue());
             }
 
-            langHelper.sendMsg(sender, finalMsg.toString());
+            LangHelper.sendMsg(sender, finalMsg.toString());
         }
     }
 }

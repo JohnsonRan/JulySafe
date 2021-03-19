@@ -1,20 +1,28 @@
 package com.github.julyss2019.bukkit.plugins.julysafe.config.lang;
 
+import com.github.julyss2019.bukkit.plugins.julysafe.JulySafe;
 import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
 
 public class Lang {
-    private final ConfigurationSection currentSection;
+    private static ConfigurationSection langSection;
 
-    public Lang(@NotNull ConfigurationSection currentSection) {
-        this.currentSection = currentSection;
+    public static void load() {
+        langSection = YamlConfiguration.loadConfiguration(new File(JulySafe.getInstance().getDataFolder(), "config" + File.separator + "lang.yml"));
     }
 
-    public String getString(@NotNull String path) {
-        return currentSection.getString(path);
+    public static LangNode getRootLangNode() {
+        return new LangNode(null);
     }
 
-    public Lang getLang(@NotNull String path) {
-        return new Lang(currentSection.getConfigurationSection(path));
+    public static LangNode getLangNode(@Nullable String path) {
+        return new LangNode(path);
+    }
+
+    public static ConfigurationSection getLangConfigSection() {
+        return langSection;
     }
 }

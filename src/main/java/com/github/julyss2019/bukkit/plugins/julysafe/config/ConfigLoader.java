@@ -33,11 +33,11 @@ public class ConfigLoader {
         }
 
         updateLogger(); // 首先设置 Logger
-        plug.setLang(new Lang(YamlConfiguration.loadConfiguration(new File(plug.getDataFolder(), "config" + File.separator + "lang.yml"))));
         setCleanEntityTarget();
         setCleanDropTarget();
         setAntiEntityFarmLimits();
         setAutoRestartTimesSeconds();
+        setEntitySpawnIntervalLimits();
     }
 
     public void updateLogger() {
@@ -74,6 +74,21 @@ public class ConfigLoader {
         }
 
         mainConfig.setAutoRestartTimesSeconds(results);
+    }
+
+    private void setEntitySpawnIntervalLimits() {
+        FileConfiguration config = YamlConfiguration.loadConfiguration(new File(plug.getDataFolder(), "config" + File.separator + "config.yml"));
+        ConfigurationSection limitsSection = Optional.ofNullable(config.getConfigurationSection("entity_spawn_interval_limit.limits"))
+                .orElse(config.getConfigurationSection("entity_spawn_interval_limit.intervals"));
+        Set<EntitySpawnIntervalLimit> results = new HashSet<>();
+
+        for (String limitName : limitsSection.getKeys(false)) {
+            ConfigurationSection limitSection = limitsSection.getConfigurationSection(limitName);
+
+            results.add(new EntitySpawnIntervalLimit(getEntityTarget(limitSection.getConfigurationSection("target")), limitSection.getInt("interval")));
+        }
+
+        mainConfig.setEntitySpawnIntervalLimits(results);
     }
 
     private void setAntiEntityFarmLimits() {

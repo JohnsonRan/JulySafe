@@ -1,9 +1,9 @@
 package com.github.julyss2019.bukkit.plugins.julysafe.listeners;
 
 import com.github.julyss2019.bukkit.plugins.julysafe.JulySafe;
-import com.github.julyss2019.bukkit.plugins.julysafe.config.MainConfig;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.Lang;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangHelper;
+import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangNode;
 import com.github.julyss2019.mcsp.julylibrary.logger.Logger;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,9 +15,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 public class QuickShopBugFixListener implements Listener {
     private final JulySafe plugin = JulySafe.getInstance();
     private final Logger logger = plugin.getPluginLogger();
-    private final MainConfig mainConfig = plugin.getMainConfig();
-    private final Lang lang = plugin.getLang().getLang("quickshop_bug_fix");
-    private final LangHelper langHelper = plugin.getLangHelper();
+    private final LangNode langNode = Lang.getLangNode("quickshop_bug_fix");
 
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
@@ -35,7 +33,7 @@ public class QuickShopBugFixListener implements Listener {
                 || itemStackType == Material.ACTIVATOR_RAIL
                 || itemStackType == Material.DETECTOR_RAIL
                 || itemStackType == Material.POWERED_RAIL)) {
-            langHelper.sendMsg(player, lang.getString("deny"));
+            LangHelper.sendMsg(player, langNode.getString("deny"));
             event.setCancelled(true);
             event.setBuild(false);
             logger.debug("[quickshop_bug_fix] [deny] ID = " + player.getName() + "(" + player.getUniqueId() + "), 位置 = " + player.getLocation() + ".");

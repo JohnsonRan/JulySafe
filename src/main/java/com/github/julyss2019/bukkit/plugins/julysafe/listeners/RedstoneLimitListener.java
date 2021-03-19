@@ -5,10 +5,12 @@ import com.github.julyss2019.bukkit.plugins.julysafe.config.MainConfig;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.MainConfigHelper;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.Lang;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangHelper;
+import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangNode;
 import com.github.julyss2019.mcsp.julylibrary.logger.Logger;
 import com.github.julyss2019.mcsp.julylibrary.text.PlaceholderContainer;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -82,9 +84,8 @@ public class RedstoneLimitListener implements Listener {
     private final Logger logger = plugin.getPluginLogger();
     private final MainConfig mainConfig = plugin.getMainConfig();
     private final MainConfigHelper mainConfigHelper = plugin.getMainConfigHelper();
-    private final Lang lang = plugin.getLang().getLang("redstone_limit");
-    private final LangHelper langHelper = plugin.getLangHelper();
-    private final SimpleDateFormat SDF = new SimpleDateFormat(lang.getString("date_time_format"));
+    private final LangNode langNode = Lang.getLangNode("redstone_limit");
+    private final SimpleDateFormat SDF = new SimpleDateFormat(langNode.getString("date_time_format"));
 
     private final Map<Chunk, Counter> counterMap = new HashMap<>();
     private final Map<Chunk, Long> banMap = new HashMap<>();
@@ -123,6 +124,12 @@ public class RedstoneLimitListener implements Listener {
         }
 
         Block block = event.getBlock();
+        Material blockMaterial = block.getType();
+
+        if (blockMaterial == Material.DAYLIGHT_DETECTOR) {
+            return;
+        }
+
         Location location = block.getLocation();
         Chunk chunk = block.getChunk();
         Counter counter = getCounter(chunk);
@@ -156,8 +163,8 @@ public class RedstoneLimitListener implements Listener {
                     UUID uuid = player.getUniqueId();
 
                     if (System.currentTimeMillis() - notifyMap.getOrDefault(uuid, -1L) > mainConfig.getRedstoneLimitNotifyInterval() * 1000L) {
-                        langHelper.sendMsg(player
-                                , lang.getString("deny"), new PlaceholderContainer()
+                        LangHelper.sendMsg(player
+                                , langNode.getString("deny"), new PlaceholderContainer()
                                         .add("x", String.valueOf(location.getBlockX()))
                                         .add("y", String.valueOf(location.getBlockY()))
                                         .add("z", String.valueOf(location.getBlockZ()))

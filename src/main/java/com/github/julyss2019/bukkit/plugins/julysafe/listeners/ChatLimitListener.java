@@ -4,6 +4,8 @@ import com.github.julyss2019.bukkit.plugins.julysafe.JulySafe;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.MainConfig;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.Lang;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangHelper;
+import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangNode;
+import com.github.julyss2019.bukkit.plugins.julysafe.util.Util;
 import com.github.julyss2019.mcsp.julylibrary.text.PlaceholderContainer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,17 +21,21 @@ import java.util.regex.Pattern;
 public class ChatLimitListener implements Listener {
     private final JulySafe plugin = JulySafe.getInstance();
     private final MainConfig mainConfig = plugin.getMainConfig();
-    private final Lang lang = plugin.getLang().getLang("chat_limit");
-    private final LangHelper langHelper = plugin.getLangHelper();
+    private final LangNode langNode = Lang.getLangNode("chat_limit");
     private final Map<UUID, Long> lastChatMap = new HashMap<>();
 
     @EventHandler
     public void onAsyncPlayerChatEvent(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
+
+        if (player.hasPermission("JulySafe.ChatLimit.Bypass") || player.hasPermission(Util.ADMIN_PER)) {
+            return;
+        }
+
         UUID uuid = player.getUniqueId();
 
         if (lastChatMap.containsKey(uuid) && System.currentTimeMillis() - lastChatMap.get(uuid) < mainConfig.getChatLimitInterval() * 1000L) {
-            langHelper.sendMsg(player, lang.getString("interval_deny"), new PlaceholderContainer().add("seconds", String.valueOf(mainConfig.getChatLimitInterval() - (System.currentTimeMillis() - lastChatMap.get(uuid)) / 1000L)));
+            LangHelper.sendMsg(player, langNode.getString("interval_deny"), new PlaceholderContainer().add("seconds", String.valueOf(mainConfig.getChatLimitInterval() - (System.currentTimeMillis() - lastChatMap.get(uuid)) / 1000L)));
             event.setCancelled(true);
             return;
         }
@@ -43,7 +49,7 @@ public class ChatLimitListener implements Listener {
             if (matcher.find()) {
                 if (mainConfig.isChatLimitCancelled()) {
                     event.setCancelled(true);
-                    langHelper.sendMsg(player, lang.getString("badwords_deny"));
+                    LangHelper.sendMsg(player, langNode.getString("badwords_deny"));
                 } else {
                     String finalMsg = msg;
 

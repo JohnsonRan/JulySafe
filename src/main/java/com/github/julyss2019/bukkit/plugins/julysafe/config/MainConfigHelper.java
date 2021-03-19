@@ -15,6 +15,16 @@ import java.util.HashSet;
 public class MainConfigHelper {
     private final MainConfig mainConfig = JulySafe.getInstance().getMainConfig();
 
+    public EntitySpawnIntervalLimit matchEntitySpawnIntervalLimit(@NotNull Entity entity) {
+        for (EntitySpawnIntervalLimit limit : mainConfig.getEntitySpawnIntervalLimits()) {
+            if (limit.getTarget().isTarget(entity)) {
+                return limit;
+            }
+        }
+
+        return null;
+    }
+
     public AntiEntityFarmLimit matchAntiEntityFarmLimit(@NotNull Entity entity) {
         for (AntiEntityFarmLimit limit : mainConfig.getAntiEntityFarmLimits()) {
             if (limit.getTarget().isTarget(entity)) {

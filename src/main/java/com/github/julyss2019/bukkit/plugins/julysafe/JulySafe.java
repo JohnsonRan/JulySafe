@@ -8,7 +8,6 @@ import com.github.julyss2019.bukkit.plugins.julysafe.config.ConfigLoader;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.MainConfig;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.MainConfigHelper;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.Lang;
-import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangHelper;
 import com.github.julyss2019.bukkit.plugins.julysafe.listeners.*;
 import com.github.julyss2019.bukkit.plugins.julysafe.tasks.*;
 import com.github.julyss2019.mcsp.julylibrary.JulyLibraryAPI;
@@ -17,11 +16,9 @@ import com.github.julyss2019.mcsp.julylibrary.utilv2.PluginUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BossBar;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -33,8 +30,6 @@ public class JulySafe extends JavaPlugin {
     private MainConfigHelper mainConfigHelper;
     private ConfigLoader configLoader;
     private Logger pluginLogger;
-    private Lang lang;
-    private LangHelper langHelper;
     private GlobalBossBarManager globalBossBarManager;
 
     @Override
@@ -51,31 +46,34 @@ public class JulySafe extends JavaPlugin {
         this.configLoader = new ConfigLoader();
 
         configLoader.load();
+        Lang.load();
 
-        boolean old = getConfig().getBoolean("quickshop_bug_fix.enabled");
+        {
+            boolean old = getConfig().getBoolean("quickshop_bug_fix.enabled");
 
-        getConfig().set("quickshop_bug_fix.enabled", false);
+            getConfig().set("quickshop_bug_fix.enabled", false);
 
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                getConfig().set("quickshop_bug_fix.enabled", old);
-            }
-        }.runTask(this);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    getConfig().set("quickshop_bug_fix.enabled", old);
+                }
+            }.runTask(this);
+        }
 
         this.commandHandler = new CustomCommandHandler();
         this.mainConfigHelper = new MainConfigHelper();
-        this.langHelper = new LangHelper();
         this.globalBossBarManager = new GlobalBossBarManager();
 
         commandHandler.setCommandFormat("&a[JulySafe] &f/${label} ${arg} - ${desc}");
+        commandHandler.setSubCommandFormat("&a[JulySafe] &f/${label} ${args} - ${desc}");
         registerCommands();
         getCommand("julysafe").setExecutor(commandHandler);
         registerListeners();
         runTasks();
         new Metrics(this, 8485);
         pluginLogger.info("&f插件版本: v" + getDescription().getVersion() + ".");
-        pluginLogger.info("&f插件技术支持群(发电后入群): 1148417878.");
+        pluginLogger.info("&f插件交流群(发电后入群): 1148417878.");
         pluginLogger.info("&f插件初始化完毕.");
     }
 
@@ -83,21 +81,9 @@ public class JulySafe extends JavaPlugin {
         return globalBossBarManager;
     }
 
-    public void setLang(@NotNull Lang lang) {
-        this.lang = lang;
-    }
-
     private void saveResources() {
         PluginUtil.saveResource(this, "config.yml", new File(getDataFolder(), "config" + File.separator + "config.yml"), false);
         PluginUtil.saveResource(this, "lang.yml", new File(getDataFolder(), "config" + File.separator + "lang.yml"), false);
-    }
-
-    public LangHelper getLangHelper() {
-        return langHelper;
-    }
-
-    public Lang getLang() {
-        return lang;
     }
 
     @Override
@@ -131,11 +117,15 @@ public class JulySafe extends JavaPlugin {
     }
 
     public void reloadPlugin() {
+        Lang.load();
         configLoader.load();
-        HandlerList.unregisterAll(this);
+/*        globalBossBarManager.getGlobalBars().forEach(bossBar -> {
+            globalBossBarManager.unregisterGlobalBar(bossBar);
+        });*/
+/*        HandlerList.unregisterAll(this);
         Bukkit.getScheduler().cancelTasks(this);
         runTasks();
-        registerListeners();
+        registerListeners();*/
     }
 
     private void runTasks() {

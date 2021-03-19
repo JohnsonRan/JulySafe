@@ -4,6 +4,7 @@ import com.github.julyss2019.bukkit.plugins.julysafe.JulySafe;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.MainConfig;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.Lang;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangHelper;
+import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangNode;
 import com.github.julyss2019.mcsp.julylibrary.logger.Logger;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -14,8 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AntiIllegalPlayerTask extends BukkitRunnable {
     private final JulySafe plugin = JulySafe.getInstance();
-    private final Lang lang = plugin.getLang().getLang("anti_illegal_player");
-    private final LangHelper langHelper = plugin.getLangHelper();
+    private final LangNode langNode = Lang.getLangNode("anti_illegal_player");
     private final Logger logger = plugin.getPluginLogger();
     private final MainConfig mainConfig = plugin.getMainConfig();
 
@@ -36,8 +36,8 @@ public class AntiIllegalPlayerTask extends BukkitRunnable {
     }
 
     private void kickAndBan(@NotNull Player player) {
-        Bukkit.getBanList(BanList.Type.NAME).addBan(player.getName(), langHelper.handleText(lang.getString("ban")), null, null);
-        player.kickPlayer(langHelper.handleText(lang.getString("ban")));
+        Bukkit.getBanList(BanList.Type.NAME).addBan(player.getName(), LangHelper.handleText(langNode.getString("ban")), null, null);
+        player.kickPlayer(LangHelper.handleText(langNode.getString("ban")));
         logger.info("[AntiIllegalPlayerTask] [封禁非法玩家] ID = " + player.getName() +  ", UUID = " + player.getUniqueId() + ".");
     }
 }

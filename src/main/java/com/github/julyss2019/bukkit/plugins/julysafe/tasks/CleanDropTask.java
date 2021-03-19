@@ -6,14 +6,13 @@ import com.github.julyss2019.bukkit.plugins.julysafe.config.MainConfig;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.MainConfigHelper;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.Lang;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangHelper;
+import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangNode;
 import com.github.julyss2019.mcsp.julylibrary.logger.Logger;
 import com.github.julyss2019.mcsp.julylibrary.message.JulyMessage;
 import com.github.julyss2019.mcsp.julylibrary.text.JulyText;
 import com.github.julyss2019.mcsp.julylibrary.text.PlaceholderContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -27,8 +26,7 @@ public class CleanDropTask extends BukkitRunnable {
     private final Logger logger = plugin.getPluginLogger();
     private final MainConfig mainConfig = plugin.getMainConfig();
     private final MainConfigHelper mainConfigHelper = plugin.getMainConfigHelper();
-    private final Lang lang = plugin.getLang().getLang("clean_drop");
-    private final LangHelper langHelper = plugin.getLangHelper();
+    private final LangNode langNode = Lang.getLangNode("clean_drop");
     private final BossBar bossBar = Bukkit.createBossBar(null, mainConfig.getCleanDropBossBarColor(), mainConfig.getCleanDropBossBarStyle());
     private int counter = 0;
 
@@ -57,7 +55,7 @@ public class CleanDropTask extends BukkitRunnable {
                 }
             }
 
-            JulyMessage.broadcastColoredMessage(langHelper.handleText(lang.getString("finished"), new PlaceholderContainer()
+            JulyMessage.broadcastColoredMessage(LangHelper.handleText(langNode.getString("finished"), new PlaceholderContainer()
                     .add("count", String.valueOf(total))));
             counter = 0;
             globalBossBarManager.unregisterGlobalBar(bossBar);
@@ -71,14 +69,10 @@ public class CleanDropTask extends BukkitRunnable {
                 globalBossBarManager.registerGlobalBar(bossBar);
             }
 
-            bossBar.setTitle(JulyText.getColoredText(langHelper.handleText(lang.getString("countdown_boss_bar"), new PlaceholderContainer()
+            bossBar.setTitle(JulyText.getColoredText(LangHelper.handleText(langNode.getString("countdown_boss_bar"), new PlaceholderContainer()
                     .add("seconds", String.valueOf(countdown)))));
             bossBar.setProgress((double) (getCountdown()) / mainConfig.getCleanDropCountdownSecond());
         }
-    }
-
-    public void onDisabled() {
-        bossBar.removeAll();
     }
 
     public int getCountdown() {

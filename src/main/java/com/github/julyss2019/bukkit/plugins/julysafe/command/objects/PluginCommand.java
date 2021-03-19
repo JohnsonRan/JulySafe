@@ -11,12 +11,15 @@ import org.bukkit.command.CommandSender;
 
 @MainCommand(firstArg = "plugin", description = "插件相关", permission = Util.ADMIN_PER)
 public class PluginCommand implements JulyCommand {
-    private final JulySafe plugin = JulySafe.getInstance();
-    private final LangHelper langHelper = plugin.getLangHelper();
+    @SubCommand(firstArg = "version", description = "显示插件版本", length = 0, senders = {SenderType.PLAYER, SenderType.CONSOLE})
+    public void version(CommandSender sender, String[] args) {
+        LangHelper.sendMsg(sender, "${prefix} 插件版本: " + JulySafe.getInstance().getDescription().getVersion() + ".");
+    }
 
     @SubCommand(firstArg = "reload", description = "重载", length = 0, senders = {SenderType.PLAYER, SenderType.CONSOLE})
     public void reload(CommandSender sender, String[] args) {
         JulySafe.getInstance().reloadPlugin();
-        langHelper.sendMsg(sender, "重载插件完毕.");
+
+        LangHelper.sendMsg(sender, "${prefix} 重载插件完毕.");
     }
 }

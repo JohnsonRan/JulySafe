@@ -3,20 +3,20 @@ package com.github.julyss2019.bukkit.plugins.julysafe.config;
 import com.github.julyss2019.bukkit.plugins.julysafe.target.EntityTarget;
 import org.jetbrains.annotations.NotNull;
 
-public class AntiEntityFarmLimit {
+public class EntitySpawnIntervalLimit {
     private final EntityTarget target;
-    private final int threshold;
+    private final int interval;
 
-    public AntiEntityFarmLimit(@NotNull EntityTarget target, int threshold) {
+    public EntitySpawnIntervalLimit(@NotNull EntityTarget target, int interval) {
         this.target = target;
-        this.threshold = threshold;
+        this.interval = interval;
     }
 
     public EntityTarget getTarget() {
         return target;
     }
 
-    public int getThreshold() {
-        return threshold;
+    public int getInterval() {
+        return interval;
     }
 }

@@ -84,7 +84,7 @@ entity_spawn_interval_limit:
   enabled: true # 是否开启
   worlds: # 世界正则表达式
     - '.*'
-  intervals:
+  limits:
     '1':
       interval: 1000
       target:

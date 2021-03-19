@@ -173,7 +173,8 @@ public class MainConfig {
 
     private EntityTarget cleanEntityTarget;
     private DropTarget cleanDropTarget;
-    private Set<AntiEntityFarmLimit> antiEntityFarmLimits;
+    private Set<AntiEntityFarmLimit> antiEntityFarmLimits = new HashSet<>();
+    private Set<EntitySpawnIntervalLimit> entitySpawnIntervalLimits = new HashSet<>();
 
     public BarColor getCleanEntityBossBarColor() {
         return cleanEntityBossBarColor;
@@ -201,6 +202,14 @@ public class MainConfig {
 
     public BarStyle getAutoRestartBossBarStyle() {
         return autoRestartBossBarStyle;
+    }
+
+    public Set<EntitySpawnIntervalLimit> getEntitySpawnIntervalLimits() {
+        return new HashSet<>(entitySpawnIntervalLimits);
+    }
+
+    public void setEntitySpawnIntervalLimits(@NotNull Set<EntitySpawnIntervalLimit> entitySpawnIntervalLimits) {
+        this.entitySpawnIntervalLimits = new HashSet<>(ValidateUtil.notNullElement(entitySpawnIntervalLimits));
     }
 
     public void setAutoRestartTimesSeconds(@NotNull Set<Integer> autoRestartTimesSeconds) {

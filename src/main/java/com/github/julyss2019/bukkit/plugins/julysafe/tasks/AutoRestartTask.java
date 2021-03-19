@@ -5,6 +5,7 @@ import com.github.julyss2019.bukkit.plugins.julysafe.bossbar.GlobalBossBarManage
 import com.github.julyss2019.bukkit.plugins.julysafe.config.MainConfig;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.Lang;
 import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangHelper;
+import com.github.julyss2019.bukkit.plugins.julysafe.config.lang.LangNode;
 import com.github.julyss2019.mcsp.julylibrary.logger.Logger;
 import com.github.julyss2019.mcsp.julylibrary.text.JulyText;
 import com.github.julyss2019.mcsp.julylibrary.text.PlaceholderContainer;
@@ -24,8 +25,7 @@ public class AutoRestartTask extends BukkitRunnable {
     private final GlobalBossBarManager globalBossBarManager = plug.getGlobalBossBarManager();
     private final Logger logger = plug.getPluginLogger();
     private final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private final Lang lang = plug.getLang().getLang("auto_restart");
-    private final LangHelper langHelper = plug.getLangHelper();
+    private final LangNode langNode = Lang.getLangNode("auto_restart");
 
     @Override
     public void run() {
@@ -53,7 +53,7 @@ public class AutoRestartTask extends BukkitRunnable {
                     globalBossBarManager.registerGlobalBar(bossBar);
                 }
 
-                bossBar.setTitle(JulyText.getColoredText(langHelper.handleText(lang.getString("countdown_boss_bar"), new PlaceholderContainer()
+                bossBar.setTitle(JulyText.getColoredText(LangHelper.handleText(langNode.getString("countdown_boss_bar"), new PlaceholderContainer()
                         .add("seconds", String.valueOf(countdown)))));
                 bossBar.setProgress((timeSeconds - nowSeconds) / (double) mainConfig.getAutoRestartCountdownSeconds());
             }
